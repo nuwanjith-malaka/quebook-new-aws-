@@ -1,0 +1,78 @@
+{% extends 'qbook/base.html' %} {% block title %}
+<title>QBook</title>
+{% endblock %} {% block styles %}
+<style>
+  .center {
+    margin: 50px auto;
+    width: 70%;
+    text-align: justify;
+  }
+  h3,
+  h4,
+  p,
+  h5 .btn-holder {
+    text-align: justify;
+  }
+  a {
+    color: black;
+    text-decoration: none;
+  }
+  ul {
+    list-style-type: none;
+  }
+  p {
+    color: rgb(81, 83, 85);
+  }
+</style>
+{% endblock %}{% block content %}
+<div class="center">
+  <h3>All Questions</h3>
+  <br />
+  <form method="POST" action="">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">Sort By</label>
+      {{ form.tag }}
+      <button type="submit" class="btn btn-info btn-sm">Sort</button>
+    </div>
+  </form>
+  <br />
+  <div class="pt-2"></div>
+  {% if questions %} {% for question in questions %}
+  <a href="{% url 'question_single' question.pk %}">
+    {% if question.heading %}
+    <h3>{{question.heading}}</h3>
+    <br />
+    {% endif %}
+    <h6>{{question.body|truncatechars:500}}</h6>
+  </a>
+  <p>
+    <a href="{% url 'tag_questions' question.tag %}"
+      ><button type="submit" class="btn btn-warning btn-sm">
+        {{question.tag}}
+      </button></a
+    >
+    Asked By
+    <a href="{% url 'asker' question.user.id %}"
+      >{% if question.user.askerprofile.photo %}
+      <img
+        src="{{question.user.askerprofile.photo.url}}"
+        width="30px"
+        height="30px"
+        style="margin-right: 3px"
+      />{% endif %} {{ question.user.username }}</a
+    >
+    on {{ question.date }}
+    <span class="badge alert-success"
+      >{{question.questionupvote_set.count}} upvotes
+    </span>
+    <span class="badge alert-danger"
+      >{{question.questiondownvote_set.count}} downvotes
+    </span>
+    <span class="badge alert-secondary">{{question.views}} views</span>
+  </p>
+  <hr />
+  <br />
+  {% endfor %} {% endif %}
+</div>
+{% endblock %}

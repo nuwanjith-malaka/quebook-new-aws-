@@ -1,0 +1,129 @@
+{% extends 'qbook/base.html' %}
+{% block title %}
+<title>Question</title>
+{% endblock %}
+{% block styles %}
+<style>
+  .center {
+    margin: 50px auto;
+    width: 70%;
+  }
+  h3,h4,p,h5
+  .btn-holder {
+    text-align: justify;
+  }
+  a {
+    color: black;
+    text-decoration: none;
+  }
+  ul {
+    list-style-type: none;
+  }
+  
+  .grey {
+    color: rgb(81, 83, 85);
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="center">
+  {% if question.heading %}
+  <h3>{{question.heading}}</h3>
+  <br>
+  {% endif %}
+  <p>{{question.body|safe}}</p><p class="grey">
+   <a href="{% url 'questionupvote' question.id %}"><button style="margin:5px;" type="submit" class="btn btn-success btn-sm">upvote</button></a>
+   <a href="{% url 'questiondownvote' question.id %}"><button style="margin:5px;" type="submit" class="btn btn-danger btn-sm">downvote</button></a>
+    
+    </a> Asked By <a href="{% url 'asker' question.user.id %}">{% if question.user.askerprofile.photo %}
+    <img src="{{question.user.askerprofile.photo.url}}"  width="30px" height="30px" style="margin-right: 3px;">{% endif %}
+    {{ question.user.username }}</a> on {{ question.date }} <span class="badge alert-success">{{question.upvotes}} upvotes</span> <span class="badge alert-danger"> {{question.downvotes}} downvotes</span> <span class="badge alert-secondary">{{question.views}} views</span>
+    {% if request.user == question.user %}</span> 
+    <a href="{% url 'question_edit' question.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Edit</button></a>
+      <a href="{% url 'question_delete' question.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Delete</button></a>
+    {% endif %}
+   <a href="{% url 'tag_questions' question.tag %}"><button type="submit" class="btn btn-warning btn-sm">{{question.tag}}</button></a>
+    </p>
+    
+    <div>
+      <h4>Comments</h4>
+      {% if comments %}
+        {% for comment in comments %}
+          <p class="grey">{{comment.comment}}</p><p >
+          Commented By <a href="{% url 'asker' comment.user.id %}">{% if comment.user.askerprofile.photo %}
+            <img src="{{comment.user.askerprofile.photo.url}}"  width="30px" height="30px" style="margin-right: 3px;">{% endif %}
+            {{ comment.user.username }}</a> on {{ comment.date }}  
+          {% if request.user == comment.user %}
+              <a href="{% url 'question_comment_edit' comment.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Edit</button></a>
+              <a href="{% url 'question_comment_delete' comment.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Delete</button></a>
+          {% endif %}
+          </p>
+          </p>
+          <hr>
+        {% endfor %}
+      {% else %}
+        <p>no comments yet.</p>
+      {% endif %}
+      
+    </div>
+    <div  style="margin: auto; max-width: 100%;" >
+        <h4>Add a comment</h4>
+        <form method="POST" action="" class="post-form">  
+          {% csrf_token %}  
+          {{form2.as_p}}
+          <button type="submit" class="btn btn-info btn-sm">Post Comment</button>  
+          </form>  
+      </div>
+    <hr>
+    
+    <div class="px-2">
+      <h4>Answers</h4>
+      {% if answers %}
+        {% for answer in answers %}
+          <p>{{answer.body}}</p><p class="grey">
+          <a href="{% url 'answerupvote' answer.id %}"><button style="margin:5px;" type="submit" class="btn btn-success btn-sm">upvote</button></a>
+          <a href="{% url 'answerdownvote' answer.id %}"><button style="margin:5px;" type="submit" class="btn btn-danger btn-sm">downvote</button></a>
+          <a href="{% url 'answer_comment_form' answer.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">comment</button></a>
+          Answerd By <a href="{% url 'asker' answer.user.id %}">{% if answer.user.askerprofile.photo %}
+            <img src="{{answer.user.askerprofile.photo.url}}"  width="30px" height="30px" style="margin-right: 3px;">{% endif %}
+            {{ answer.user.username }}</a> on {{ answer.date }} <span class="badge alert-success">{{answer.upvotes}} upvotes</span>  <span class="badge alert-danger">{{answer.downvotes}} downvotes</span> </p>
+          {% if request.user == answer.user %}
+            <p><a href="{% url 'answer_edit' answer.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Edit</button></a>
+              <a href="{% url 'answer_delete' answer.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Delete</button></a></p>
+          {% endif %}
+          </p>
+          <div >
+            {% for comment in answer.comments %}
+            <hr>
+              <p class="grey">{{comment.comment}}</p><p >
+              Commented By <a href="{% url 'asker' comment.user.id %}">{% if comment.user.askerprofile.photo %}
+                <img src="{{comment.user.askerprofile.photo.url}}"  width="30px" height="30px" style="margin-right: 3px;">{% endif %}
+                {{ comment.user.username }}</a> on {{ comment.date }}  </p>
+              {% if request.user == comment.user %}
+                <a href="{% url 'answer_comment_edit' comment.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Edit</button></a>
+                  <a href="{% url 'answer_comment_delete' comment.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Delete</button></a></p>
+              {% endif %}
+              
+            {% endfor %}
+            <hr>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p>no answers yet.</p>
+      {% endif %}
+    </div>
+    <div style="margin: auto; max-width: 100%;" >
+        <h4>Write an answer</h4>
+        <form method="POST" action="" class="post-form">  
+          {% csrf_token %}  
+          {{form1.as_p}}
+          <button type="submit" class="btn btn-info btn-sm">Post Answer</button>  
+        </form> 
+    
+    </div>
+</div>
+    
+     
+  
+
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'qbook/base.html' %} {% block title %}
+<title>Edit Profile</title>
+{% endblock %}{% block styles %}
+<style>
+  .center {
+    margin: 50px auto;
+    width: 30%;
+  }
+  h4,
+  p,
+  h5 {
+    text-align: justify;
+  }
+  h3,
+  .btn-holder {
+    text-align: center;
+  }
+  a {
+    color: black;
+    text-decoration: none;
+  }
+  ul {
+    list-style-type: none;
+  }
+</style>
+{% block tags %}{% endblock %} {% endblock %} {% block content %}
+<div class="center">
+  <h3>Edit Profile</h3>
+  <br />
+  <form method="POST" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">First Name</label>
+      {{ form.first_name }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Last Name</label>
+      {{ form.last_name }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Photo</label>
+      {{ form.photo }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">School</label>
+      {{ form.school }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Grade</label>
+      {{ form.grade }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">City</label>
+      {{ form.city }}
+    </div>
+    <div class="btn-holder">
+      <a href="{% url 'asker' user.pk %}"
+        ><button type="submit" class="btn btn-info btn-sm">
+          Update Profile
+        </button></a
+      >
+    </div>
+  </form>
+</div>
+
+{% endblock %}

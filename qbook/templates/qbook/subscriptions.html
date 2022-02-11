@@ -1,0 +1,38 @@
+{% extends 'qbook/base.html' %} {% block title %}
+<title>Subscriptions</title>
+{% endblock %} {% block styles %}
+<style>
+  .center {
+    margin-right: 200px;
+    margin-top: 50px;
+    text-align: justify;
+  }
+
+  ul {
+    list-style-type: none;
+  }
+</style>
+{% endblock %} {% block content %}
+
+<p><b>Recent</b></p>
+<p><b>This Week</b></p>
+<p><b>This Month</b></p>
+<p><b>Older</b></p>
+
+{% if questions %} {% for question in questions %}
+<a href="{% url 'question_single' question.pk %}"
+  ><h4>{{question.body|truncatechars:500}}</h4></a
+>
+<p>
+  <a href="{% url 'tag_questions' question.tag %}"
+    ><button type="submit" class="btn btn-warning btn-sm">
+      {{question.tag}}
+    </button></a
+  >
+  Asked By
+  <a href="{% url 'asker' question.user.id %}">{{ question.user.username }}</a>
+  on {{ question.date }} upvotes- {{question.upvotes}} downvotes-
+  {{question.downvotes}} views- {{question.views}}
+</p>
+<hr />
+{% endfor %} {% endif %} {% endblock %}

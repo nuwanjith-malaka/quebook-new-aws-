@@ -1,0 +1,42 @@
+{% extends 'qbook/base.html' %} {% block title %}
+<title>Delete Answer</title>
+{% endblock %} {% block styles %}
+<style>
+  .center {
+    margin: 50px auto;
+    width: 70%;
+  }
+  h4,
+  p,
+  .btn-holder {
+    text-align: center;
+  }
+  ul {
+    list-style-type: none;
+  }
+</style>
+{% endblock %}{% block content %}
+<div class="center">
+  <h4>Are you sure you want to delete this answer?</h4>
+  <br /><br />
+  <p>{{answer.body}}</p>
+  <br /><br />
+  <p>
+    <form method="POST" action="" class="col-lg-6 offset-lg-3 ">
+      {% csrf_token %}
+      <div>
+    <a href="{% url 'question_single' answer.question.id %}"
+       style="margin: 5px" type="submit" class="btn btn-info btn-sm">
+        Cancel</a>
+    <button style="margin: 5px" type="submit" class="btn btn-info btn-sm">
+        Yes, I'm sure
+      </button>
+    </div> 
+  </form>
+  </p>
+</div>
+
+{% endblock %}
+ <!-- <a href="{% url 'answer_delete_confirm' answer.id %}"
+      ></a
+    > -->

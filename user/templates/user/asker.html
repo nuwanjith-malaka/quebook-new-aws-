@@ -1,0 +1,107 @@
+{% extends 'qbook/base.html' %} {% block title %}
+<title>Asker</title>
+{% endblock %} {% block styles %}
+<style>
+  .center {
+    margin: 50px auto;
+    width: 70%;
+  }
+  h3,
+  h4,
+  p,
+  h5 .btn-holder {
+    text-align: justify;
+  }
+  a {
+    color: black;
+    text-decoration: none;
+  }
+  ul {
+    list-style-type: none;
+  }
+
+  .grey {
+    color: rgb(81, 83, 85);
+  }
+</style>
+{% endblock %}{% block content %}
+<div class="center">
+  {% if asker %}
+  <div style="display: flex">
+    <div style="margin-right: 15px">
+      {% if asker.photo %}
+      <p><img src="{{asker.photo.url}}" width="175px" height="200px" /></p>
+      {% endif %}
+    </div>
+    <div>
+      <p><b>{{asker.first_name}} {{asker.last_name}}</b></p>
+      <p>school: {{asker.school}}</p>
+      <p>grade: {{asker.grade}}</p>
+      <p>city: {{asker.city}}</p>
+    </div>
+  </div>
+
+  {% if request.user == asker.user %}
+  <a href="{% url 'edit_profile' asker.id %}"
+    ><button type="submit" class="btn btn-info btn-sm">Edit Profile</button></a
+  >
+  <a href="{% url 'delete_profile' asker.id %}"
+    ><button type="submit" class="btn btn-info btn-sm">
+      Delete Profile
+    </button></a
+  >
+  <br /><br />
+  {% endif %} {% else %}{% if user == request.user %}
+  <form method="POST" action="" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">First Name</label>
+      {{ form.first_name }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Last Name</label>
+      {{ form.last_name }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Photo</label>
+      {{ form.photo }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">School</label>
+      {{ form.school }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Grade</label>
+      {{ form.grade }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">City</label>
+      {{ form.city }}
+    </div>
+    <a href="{% url 'asker' user.pk %}"
+      ><button type="submit" class="btn btn-info btn-sm">
+        Update Profile
+      </button></a
+    >
+  </form>
+  {% endif %}
+  <br /><br />
+  {% endif %} {% if questions %} {% for question in questions %}
+  <a href="{% url 'question_single' question.pk %}"
+    ><h6>{{question.body|truncatechars:500}}</h6></a
+  >
+  <p class="grey">
+    <a href="{% url 'tag_questions' question.tag %}"
+      ><button type="submit" class="btn btn-warning btn-sm">
+        {{question.tag}}
+      </button></a
+    >
+    Asked on {{ question.date }}
+    <span class="badge alert-success">{{question.upvotes}} upvotes</span>
+    <span class="badge alert-danger">{{question.downvotes}} downvotes</span>
+    <span class="badge alert-secondary">{{question.views}} views</span>
+  </p>
+  <hr />
+  {% endfor %} {% endif %}
+</div>
+{% endblock %}

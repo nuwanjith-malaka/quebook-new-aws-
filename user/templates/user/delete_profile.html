@@ -1,0 +1,48 @@
+{% extends 'qbook/base.html' %} {% block title %}
+<title>Delete Question</title>
+{% endblock %} {% block styles %}
+<style>
+  .center {
+    margin: 50px auto;
+    width: 70%;
+  }
+  h4,
+  p,
+  h3 {
+    text-align: center;
+  }
+  ul {
+    list-style-type: none;
+  }
+</style>
+{% endblock %} {% block content %}
+
+<div class="center">
+  <h3>Delete Profile</h3>
+  <br /><br />
+  <h4>Are you sure you want to delete your profile?</h4>
+  <br /><br />
+  <p>After you have deleted you profile your all questions, answers and comments will be deleted. </p>
+  <br /><br />
+  <p>
+    
+    <form method="POST" action="" class="col-lg-6 offset-lg-3 ">
+      {% csrf_token %}
+      <div>
+        <a href="{% url 'asker' asker.user.id %}"
+        style="margin: 5px"  class="btn btn-info btn-sm">
+          Cancel
+        </a
+      >
+        <button style="margin: 5px" type="submit" class="btn btn-info btn-sm">
+        Yes, I'm sure
+      </button>
+      </div>
+    </form>
+    
+  </p>
+
+  {% endblock %}
+</div>
+<!-- <a href="{% url 'question_delete_confirm' question.id %}"
+      ></a>-->

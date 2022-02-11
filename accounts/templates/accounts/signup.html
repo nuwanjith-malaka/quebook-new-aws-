@@ -1,0 +1,60 @@
+{% extends 'qbook/base.html' %} {% block title %}
+<title>SignUp</title>
+{% endblock %} {% block styles %}
+<style>
+  .errorlist {
+    height: 70px;
+    text-align: center;
+  }
+  .center {
+    margin: 20px auto;
+    width: 60%;
+  }
+  h2,
+  p,
+  .btn-holder {
+    text-align: center;
+  }
+  ul {
+    list-style-type: none;
+  }
+</style>
+{% endblock %} {% block tags%}{% endblock %} {% block content %}
+<div class="center">
+  <div class="errorlist">
+    {% if form.errors %} {% for error in form.errors.values %}
+    <p>{{ error }}</p>
+    {% endfor %} {% endif %}
+  </div>
+  <h2>Sign Up</h2>
+  <br /><br />
+  <form method="POST" action="">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">Username</label>
+      {{form.username}}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      {{form.email}}
+    </div>
+    <div class="mb-3">
+      <label for="exampleInputPassword1" class="form-label">Password</label>
+      {{form.password1}}
+    </div>
+    <div class="mb-3">
+      <label for="exampleInputPassword2" class="form-label"
+        >Confirm Password</label
+      >
+      {{form.password2}}
+    </div>
+    <br />
+    <div class="btn-holder">
+      <button type="submit" class="btn btn-primary">Sign Up</button>
+    </div>
+  </form>
+  <br />
+  <p>Already have an account ? <a href="{% url 'login' %}">Sign In</a></p>
+</div>
+
+{% endblock %}

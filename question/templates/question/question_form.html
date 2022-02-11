@@ -1,0 +1,40 @@
+{% extends 'qbook/base.html' %}{% block title %}
+<title>Ask Question</title>
+{% endblock %} {% load static %} {% block styles %}
+<style>
+  .center {
+    margin: 50px auto;
+    width: 70%;
+  }
+  h3,
+  .btn-holder {
+    text-align: center;
+  }
+  ul {
+    list-style-type: none;
+  }
+</style>
+{% endblock %}{% block content %}
+<div class="center">
+  <h3>Ask Question</h3>
+  <form method="POST" action="">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">Heading</label>
+      {{ form.heading }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Question</label>
+      {{ form.body }}
+    </div>
+    <div class="mb-3">
+      <label class="form-label">Tag</label>
+      {{ form.tag }}
+    </div>
+    <br />
+    <div class="btn-holder">
+      <button type="submit" class="btn btn-info">Ask Question</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

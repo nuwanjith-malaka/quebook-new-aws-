@@ -1,0 +1,35 @@
+{% extends 'qbook/base.html' %} {% block title %}
+<title>Edit Comment</title>
+{% endblock %} {% block styles %}
+<style>
+  .center {
+    margin: 20px auto;
+    width: 60%;
+  }
+  h4,
+  .btn-holder {
+    text-align: center;
+  }
+
+  ul {
+    list-style-type: none;
+  }
+</style>
+{% endblock %}{% block content %}
+<div class="center">
+  <h4>Edit Comment</h4>
+  <br /><br />
+  <form method="POST" action="">
+    {% csrf_token %}
+    <div class="mb-3">
+      <label class="form-label">Comment</label>
+      {{ form.comment }}
+    </div>
+    <div class="btn-holder">
+      <br /><br />
+      <button type="submit" class="btn btn-info">Edit Comment</button>
+    </div>
+  </form>
+</div>
+
+{% endblock %}
