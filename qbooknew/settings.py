@@ -31,7 +31,7 @@ SECRET_KEY = env('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['quebooknew.herokuapp.com', 'localhost']
+ALLOWED_HOSTS = ['*']
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -93,16 +93,14 @@ WSGI_APPLICATION = 'qbooknew.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'quebook',
+        'USER': 'malaka',
+        'PASSWORD': 'malaka1999625',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
-
-# Heroku: Update database configuration from $DATABASE_URL.
-import dj_database_url
-
-db_from_env = dj_database_url.config(conn_max_age=500)
-DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
