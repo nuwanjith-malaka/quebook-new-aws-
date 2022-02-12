@@ -151,8 +151,8 @@ LOGIN_REDIRECT_URL = 'https://quebooknew.herokuapp.com/'
 LOGIN_URL = 'https://quebooknew.herokuapp.com/login/'
 
 if DEBUG:
-    LOGIN_REDIRECT_URL = 'http://127.0.0.1:8000/'
-    LOGIN_URL = 'http://127.0.0.1:8000/login/'
+    LOGIN_REDIRECT_URL = 'http://ec2-18-220-234-181.us-east-2.compute.amazonaws.com:8000/'
+    LOGIN_URL = 'http://ec2-18-220-234-181.us-east-2.compute.amazonaws.com:8000/login/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
