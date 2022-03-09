@@ -116,6 +116,8 @@ class DeleteProfileView(DeleteView):
 #     return redirect('asker', pk=pk)
 
 def FriendsView(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     try:
         asker_profile = AskerProfile.objects.get(user=request.user)
         user = User.objects.get(pk=request.user.pk)

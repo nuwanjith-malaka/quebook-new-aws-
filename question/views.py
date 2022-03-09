@@ -15,28 +15,28 @@ from answer.forms import AnswerForm
 from django.db.models import Count
 from datetime import datetime, timezone
 #Create your views here.
-# def QuestionFormView(request):
-#     if request.method == 'POST':
-#         form = QuestionForm(request.POST)
-#         if form.is_valid():
-#             question = form.save(commit=False)
-#             question.user = request.user
-#             question.save()
-#             return redirect('home')
-#     if request.method == 'GET':
-#         if not request.user.is_authenticated:
-#             return redirect('login')
-#         form = QuestionForm()
-#     return render(request, 'question/question_form.html', {'form': form})
+def QuestionFormView(request):
+    if request.method == 'POST':
+        form = QuestionForm(request.POST)
+        if form.is_valid():
+            question = form.save(commit=False)
+            question.user = request.user
+            question.save()
+            return redirect('home')
+    if request.method == 'GET':
+        if not request.user.is_authenticated:
+            return redirect('login')
+        form = QuestionForm()
+    return render(request, 'question/question_form.html', {'form': form})
 
-class QuestionFormView(LoginRequiredMixin, CreateView):
-    model = Question
-    form_class = QuestionForm
-    template_name = 'question/question_form.html'
+# class QuestionFormView(LoginRequiredMixin, CreateView):
+#     model = Question
+#     form_class = QuestionForm
+#     template_name = 'question/question_form.html'
 
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
+#     def form_valid(self, form):
+#         form.instance.user = self.request.user
+#         return super().form_valid(form)
 
 
 def QuestionSingleView(request, pk):
