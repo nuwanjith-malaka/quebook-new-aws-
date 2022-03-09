@@ -1,0 +1,79 @@
+{% extends 'qbook/base.html' %} {% block title %}
+<title>QBook</title>
+{% endblock %} {% block styles %}
+<style>
+  .center {
+    margin: 50px auto;
+    width: 70%;
+    text-align: justify;
+  }
+  h4,
+  p,
+  h5 .btn-holder {
+    text-align: justify;
+  }
+  h3{
+    text-align: center;
+  }
+  a {
+    color: black;
+    text-decoration: none;
+  }
+  ul {
+    list-style-type: none;
+  }
+  p {
+    color: rgb(81, 83, 85);
+  }
+</style>
+{% endblock %}{% block content %}
+<div class="center">
+  <h3>Latest Questions</h3>
+  <br />
+  <div class="pt-2"></div>
+  {% if questions %} {% for question in questions %}
+
+  <div class="card text-center">
+    <a href="{% url 'question_single' question.pk %}">
+    <div class="card-header">
+      {% if question.heading %}
+      <h4>{{question.heading}}</h4>
+      {% endif %}
+    </div>
+    <div class="card-body">
+      <!-- <h5 class="card-title">Special title treatment</h5> -->
+      <p class="card-text">{{question.body|truncatechars:500}}</p>
+    </div>
+    <div class="card-footer text-muted">
+      <p>
+        <a href="{% url 'tag_questions' question.tag %}"
+          ><button type="submit" class="btn btn-warning btn-sm">
+            {{question.tag}}
+          </button></a
+        >
+        Asked By
+        <a href="{% url 'asker' question.user.id %}"
+          >{% if question.user.asker.photo %}
+          <img
+            src="{{question.user.asker.photo.url}}"
+            width="30px"
+            height="30px"
+            style="margin-right: 3px"
+          />{% endif %} {{ question.user.username }}</a
+        >
+        on {{ question.question_asked_long_ago }} ago
+        <span class="badge alert-success"
+          >{{question.upvotes.count}} upvotes
+        </span>
+        <span class="badge alert-danger"
+          >{{question.downvotes.count}} downvotes
+        </span>
+        <span class="badge alert-secondary">{{question.views}} views</span>
+      </p>
+    </div>
+    </a>
+  </div>
+  <br>
+  {% endfor %} {% endif %}
+</div>
+{% endblock %}

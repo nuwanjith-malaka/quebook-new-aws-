@@ -6,9 +6,12 @@
     margin: 20px auto;
     width: 60%;
   }
-  h4,
   .btn-holder {
     text-align: center;
+  }
+  a {
+    color: black;
+    text-decoration: none;
   }
   ul {
     list-style-type: none;
@@ -16,9 +19,40 @@
 </style>
 {% endblock %}{% block content %}
 <div class="center">
-  <p>{{pk}}</p>
+    {% if question.heading %}
+    <h3>{{question.heading}}</h3>
+    {% endif %}
+    <p>{{question.body|safe}}</p><p class="grey">
+     <a href="{% url 'questionupvote' question.id %}"><button style="margin:5px;" type="submit" class="btn btn-success btn-sm">upvote</button></a>
+     <a href="{% url 'questiondownvote' question.id %}"><button style="margin:5px;" type="submit" class="btn btn-danger btn-sm">downvote</button></a>
+      
+      </a> Asked By <a href="{% url 'asker' question.user.id %}">{% if question.user.askerprofile.photo %}
+      <img src="{{question.user.askerprofile.photo.url}}"  width="30px" height="30px" style="margin-right: 3px;">{% endif %}
+      {{ question.user.username }}</a> on {{ question.question_asked_long_ago }} ago <span class="badge alert-success">{{question.upvotes.count}} upvotes</span> <span class="badge alert-danger"> {{question.downvotes.count}} downvotes</span> <span class="badge alert-secondary">{{question.views}} views</span>
+      {% if request.user == question.user %}</span> 
+      <a href="{% url 'question_edit' question.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Edit</button></a>
+        <a href="{% url 'question_delete' question.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Delete</button></a>
+      {% endif %}
+     <a href="{% url 'tag_questions' question.tag %}"><button type="submit" class="btn btn-warning btn-sm">{{question.tag}}</button></a>
+      </p>
+
+      <div class="px-2">
+        <h4>Answer</h4>
+            <p>{{answer.body}}</p><p class="grey">
+            <a href="{% url 'answerupvote' answer.id %}"><button style="margin:5px;" type="submit" class="btn btn-success btn-sm">upvote</button></a>
+            <a href="{% url 'answerdownvote' answer.id %}"><button style="margin:5px;" type="submit" class="btn btn-danger btn-sm">downvote</button></a>
+            Answerd By <a href="{% url 'asker' answer.user.id %}">{% if answer.user.askerprofile.photo %}
+              <img src="{{answer.user.askerprofile.photo.url}}"  width="30px" height="30px" style="margin-right: 3px;">{% endif %}
+              {{ answer.user.username }}</a> on {{ answer.answer_asked_long_ago }} ago <span class="badge alert-success">{{answer.upvotes.count}} upvotes</span>  <span class="badge alert-danger">{{answer.downvotes.count}} downvotes</span> </p>
+            {% if request.user == answer.user %}
+              <p><a href="{% url 'answer_edit' answer.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Edit</button></a>
+                <a href="{% url 'answer_delete' answer.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Delete</button></a></p>
+            {% endif %}
+            </p>
+      </div>
+      <br>
   <h4>Add Comment</h4>
-  <br /><br />
+  <br />
   <form method="POST" action="">
     {% csrf_token %}
     <div class="mb-3">
@@ -26,7 +60,7 @@
       {{ form.comment }}
     </div>
     <div class="btn-holder">
-      <br /><br />
+      <br />
       <button type="submit" class="btn btn-info">Add Comment</button>
     </div>
   </form>

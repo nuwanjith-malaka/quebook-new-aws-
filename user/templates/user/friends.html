@@ -1,0 +1,163 @@
+{% extends 'qbook/base.html' %} {% block title %}
+<title>Friends</title>
+{% endblock %} {% block styles %}
+<style>
+  .center {
+    margin: 50px auto;
+    width: 70%;
+  }
+  h3,
+  h4,
+  p,
+  h5 .btn-holder {
+    text-align: justify;
+  }
+  a {
+    color: black;
+    text-decoration: none;
+  }
+  ul {
+    list-style-type: none;
+  }
+
+  .grey {
+    color: rgb(81, 83, 85);
+  }
+  .card{
+     margin-bottom: 50px; 
+  }
+  .card-img-top{
+      width: 100px;
+      height: 100px;
+      margin: 20px 40px;
+  }
+</style>
+{% endblock %}{% block content %}
+<div class="center">
+    <h3>Friends</h3>
+    <br />
+    <div class="row">
+        {% for asker in from_friends %}
+      <div class="col">
+          <div class="card" style="width: 12rem;">
+              <a href="{% url 'asker' asker.user.pk %}">
+                 <img src="{{asker.photo.url}}" class="card-img-top" alt="asker photo"  >
+              <div class="card-body">
+                <h5 class="card-title">{{ asker.first_name }} {{asker.last_name}} </h5>
+                <p class="card-text">
+                    School: {{asker.school}} <br>
+                    City: {{asker.city}} <br>
+                    Grade: {{asker.grade}} <br>
+                </p>
+                <a href="{% url 'un_friend' asker.user.pk %}" class="btn btn-primary">UnFriend</a>
+              </div> 
+              </a>
+          </div>
+      </div>
+      {% endfor %}
+    {% for asker in to_friends %}
+  <div class="col">
+      <div class="card" style="width: 12rem;">
+          <a href="{% url 'asker' asker.user.pk %}">
+             <img src="{{asker.photo.url}}" class="card-img-top" alt="asker photo"  >
+          <div class="card-body">
+            <h5 class="card-title">{{ asker.first_name }} {{asker.last_name}} </h5>
+            <p class="card-text">
+                School: {{asker.school}} <br>
+                City: {{asker.city}} <br>
+                Grade: {{asker.grade}} <br>
+            </p>
+            <a href="{% url 'un_friend' asker.user.pk %}" class="btn btn-primary">UnFriend</a>
+          </div> 
+          </a>
+      </div>
+  </div>
+  {% endfor %}
+  {% for asker in friends_requested %}
+  <div class="col">
+      <div class="card" style="width: 12rem;">
+          <a href="{% url 'asker' asker.user.pk %}">
+             <img src="{{asker.photo.url}}" class="card-img-top" alt="asker photo"  >
+          <div class="card-body">
+            <h5 class="card-title">{{ asker.first_name }} {{asker.last_name}} </h5>
+            <p class="card-text">
+                School: {{asker.school}} <br>
+                City: {{asker.city}} <br>
+                Grade: {{asker.grade}} <br>
+            </p>
+              <a href="{% url 'confirm_request' asker.user.pk %}" class="btn btn-primary">Confirm</a><br>
+              <a href="{% url 'delete_request' asker.user.pk %}" class="btn btn-primary">Delete</a>
+            
+          </div> 
+          </a>
+      </div>
+  </div>
+  {% endfor %}
+    {% for asker in requested_friends %}
+  <div class="col">
+      <div class="card" style="width: 12rem;">
+          <a href="{% url 'asker' asker.user.pk %}">
+             <img src="{{asker.photo.url}}" class="card-img-top" alt="asker photo"  >
+          <div class="card-body">
+            <h5 class="card-title">{{ asker.first_name }} {{asker.last_name}} </h5>
+            <p class="card-text">
+                School: {{asker.school}} <br>
+                City: {{asker.city}} <br>
+                Grade: {{asker.grade}} <br>
+            </p>
+            <a href="{% url 'add_friend' asker.user.pk %}" class="btn btn-primary">Remove Request</a>
+          </div> 
+          </a>
+      </div>
+  </div>
+  {% endfor %}
+</div>
+    <hr>
+  <h3>Sugessions</h3>
+  <br />
+  <div class="row">
+    {% for asker in sugessions %}
+  <div class="col">
+      <div class="card" style="width: 12rem;">
+          <a href="{% url 'asker' asker.user.pk %}">
+             <img src="{{asker.photo.url}}" class="card-img-top" alt="asker photo"  >
+          <div class="card-body">
+            <h5 class="card-title">{{ asker.first_name }} {{asker.last_name}} </h5>
+            <p class="card-text">
+                School: {{asker.school}} <br>
+                City: {{asker.city}} <br>
+                Grade: {{asker.grade}} <br>
+            </p>
+              <a href="{% url 'add_friend' asker.user.pk %}" class="btn btn-primary">Add Friend</a>
+          </div> 
+          </a>
+      </div>
+  </div>
+  {% endfor %}
+</div>
+
+    <hr>
+<h3>Find Friends</h3>
+<br />
+<div class="row">
+      {% for asker in askers %}
+    <div class="col">
+        <div class="card" style="width: 12rem;">
+            <a href="{% url 'asker' asker.user.pk %}">
+               <img src="{{asker.photo.url}}" class="card-img-top" alt="asker photo"  >
+            <div class="card-body">
+              <h5 class="card-title">{{ asker.first_name }} {{asker.last_name}} </h5>
+              <p class="card-text">
+                  School: {{asker.school}} <br>
+                  City: {{asker.city}} <br>
+                  Grade: {{asker.grade}} <br>
+              </p>
+              <a href="{% url 'add_friend' asker.user.pk %}" class="btn btn-primary">Add Friend</a>
+            </div> 
+            </a>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+</div>
+{% endblock %}

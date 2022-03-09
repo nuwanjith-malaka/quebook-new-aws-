@@ -7,7 +7,7 @@ GRADE = [
     ('11','11')
 ]
 class AskerProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, related_name='asker', on_delete=models.CASCADE)
     first_name = models.CharField(max_length=20, null=True, blank=True)
     last_name = models.CharField(max_length=20, null=True, blank=True)
     photo = models.ImageField(null=True, blank=True)
@@ -19,6 +19,7 @@ class AskerProfile(models.Model):
         return reverse('asker', kwargs={'pk': self.user.pk})
 
 class FriendShip(models.Model):
-    from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followers')
-    to_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='followings')
+    from_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='from_friends')
+    to_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='to_friends')
+    accepted = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)

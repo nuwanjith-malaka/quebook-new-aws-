@@ -19,19 +19,11 @@ env = environ.Env()
 environ.Env.read_env()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 #BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('DJANGO_SECRET_KEY')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ['ec2-18-220-234-181.us-east-2.compute.amazonaws.com']
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -46,6 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'django_extensions',
+
+    'rest_framework',
+
     'storages',
     'environ',
 
@@ -54,7 +50,9 @@ INSTALLED_APPS = [
     'qbook',
     'question',
     'votes',
-    'user'
+    'user',
+    
+    'api'
 ]
 
 MIDDLEWARE = [
@@ -86,21 +84,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'qbooknew.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/4.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'quebook',
-        'USER': 'malaka',
-        'PASSWORD': 'malaka1999625',
-        'HOST': 'localhost',
-        'PORT': '',
-    }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -147,13 +130,6 @@ STATICFILES_DIRS = (
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = 'https://quebooknew.herokuapp.com/'
-LOGIN_URL = 'https://quebooknew.herokuapp.com/login/'
-
-if DEBUG:
-    LOGIN_REDIRECT_URL = 'http://ec2-18-220-234-181.us-east-2.compute.amazonaws.com:8000/'
-    LOGIN_URL = 'http://ec2-18-220-234-181.us-east-2.compute.amazonaws.com:8000/login/'
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = '587'
@@ -173,3 +149,15 @@ AWS_S3_OBJECT_PARAMETERS = {
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 STATICFILES_STORAGE = 'storages.backends.s3boto3.S3StaticStorage'
+
+REST_FRAMEWORK = {
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+    ],
+
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ]
+
+}

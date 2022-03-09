@@ -6,7 +6,6 @@ from django.urls import reverse
 # Create your models here.
 TAG = [
     ('Buddhism', 'Buddhism'),
-    ('Sinhala', 'Sinhala'),
     ('English', 'English'),
     ('Mathematics', 'Mathematics'),
     ('Geography', 'Geography'),
@@ -20,7 +19,6 @@ TAG = [
     ('History', 'History'),
     ('Music', 'Music'),
     ('Health', 'Health'),
-    ('Tamil', 'Tamil'),
 ]
 
 class Question(models.Model):
@@ -32,7 +30,7 @@ class Question(models.Model):
     )
     body = TextField(verbose_name='', null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='questions', on_delete=models.CASCADE)
     views = models.IntegerField(default=0)
 
     def get_absolute_url(self):
@@ -40,6 +38,6 @@ class Question(models.Model):
 
 class QuestionComment(models.Model):
     comment = models.TextField()
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, related_name='question_comments', on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, related_name='comments', on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)

@@ -3,62 +3,46 @@ from question.models import Question
 from .forms import SortForm
 from django.db.models import Count
 from votes.models import QuestionUpVote, QuestionDownVote
+from datetime import datetime, timezone
+from user.models import FriendShip
+from django.db.models import Q
+from django.shortcuts import redirect
 # Create your views here.
+
 def HomeView(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    to_friends = [friendship.from_user for friendship in FriendShip.objects.filter(to_user=request.user, accepted=True)]
+    from_friends = [friendship.to_user for friendship in FriendShip.objects.filter(from_user=request.user, accepted=True)]
+    friends = to_friends + from_friends + [request.user]
+    questions = Question.objects.filter(Q(user__in=friends)).order_by('-date')
+    for question in questions:
+        question_date_diff = datetime.now(timezone.utc)-question.date
+        if question_date_diff.days/365 > 1:
+            question_asked_long_ago = str(question_date_diff.days/365) + ' years'
+        elif question_date_diff.days/30 > 1:
+            question_asked_long_ago = str(question_date_diff.days/30) + ' months'
+        elif question_date_diff.days/7 > 1:
+            question_asked_long_ago = str(question_date_diff.days/7) + ' weeks'   
+        else:
+            question_asked_long_ago = str(question_date_diff.days) + ' days'  
+        question.question_asked_long_ago = question_asked_long_ago
+
+    return render(request, 'qbook/home.html', {'questions':questions})
+
+
+def LatestQuestionsView(request):
     questions = Question.objects.all().order_by('-date')
-    if request.method == 'POST':
-        form = SortForm(request.POST)
-        if form.is_valid():
-            form_tag = form.cleaned_data['tag']
-            if form_tag == 'O':
-                questions = questions.order_by('date')
-            if form_tag == 'N':
-                questions = questions.order_by('-date')
-            if form_tag == 'P':
-                questions = questions.annotate(upvotes=Count(
-                    'questionupvote')).order_by('-views', '-upvotes')
-    else:
-        form = SortForm()
-    return render(request, 'qbook/home.html', {'questions': questions, 'form': form})
-
-
-def TrendingView(request):
-    questions = Question.objects.all()
     for question in questions:
-        question.upvotes = QuestionUpVote.objects.filter(
-            question=question).count()
-        question.downvotes = QuestionDownVote.objects.filter(
-            question=question).count()
-    return render(request, 'qbook/trending.html', {'questions': questions})
+        question_date_diff = datetime.now(timezone.utc)-question.date
+        if question_date_diff.days/365 > 1:
+            question_asked_long_ago = str(question_date_diff.days/365) + ' years'
+        elif question_date_diff.days/30 > 1:
+            question_asked_long_ago = str(question_date_diff.days/30) + ' months'
+        elif question_date_diff.days/7 > 1:
+            question_asked_long_ago = str(question_date_diff.days/7) + ' weeks'   
+        else:
+            question_asked_long_ago = str(question_date_diff.days) + ' days'  
+        question.question_asked_long_ago = question_asked_long_ago
 
-
-def SubscriptionsView(request):
-    questions = Question.objects.all()
-    for question in questions:
-        question.upvotes = QuestionUpVote.objects.filter(
-            question=question).count()
-        question.downvotes = QuestionDownVote.objects.filter(
-            question=question).count()
-    return render(request, 'qbook/subscriptions.html', {'questions': questions})
-
-from django.contrib.syndication.views import Feed
-from django.urls import reverse
-from question.models import Question
-
-class LatestQuestionsFeed(Feed):
-    title = "Latest questions"
-    link = "/sitenews/"
-    description = "Latest questions askeed by users."
-
-    def items(self):
-        return Question.objects.order_by('-date')[:5]
-
-    def item_title(self, item):
-        return item.tag
-
-    def item_description(self, item):
-        return item.body
-
-    # item_link is only needed if NewsItem has no get_absolute_url method.
-    def item_link(self, item):
-        return reverse('question_single', args=[item.pk])
+    return render(request, 'qbook/latest.html', {'questions': questions})

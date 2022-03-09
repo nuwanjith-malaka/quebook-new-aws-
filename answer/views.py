@@ -5,6 +5,7 @@ from question.forms import QuestionCommentForm
 from question.forms import QuestionForm
 from django.urls import reverse
 from django.views.generic.edit import UpdateView, DeleteView,CreateView
+from datetime import datetime, timezone
 # Create your views here.
 # def AnswerEditView(request, pk):
 #     if request.method == 'POST':
@@ -103,6 +104,30 @@ def AnswerCommentFormView(request, pk):
     if not request.user.is_authenticated:
         return redirect('login')
     answer = Answer.objects.get(id=pk)
+    question = answer.question
+
+    question_date_diff = datetime.now(timezone.utc)-question.date
+    if question_date_diff.days/365 > 1:
+        question_asked_long_ago = str(question_date_diff.days/365) + ' years'
+    elif question_date_diff.days/30 > 1:
+        question_asked_long_ago = str(question_date_diff.days/30) + ' months'
+    elif question_date_diff.days/7 > 1:
+        question_asked_long_ago = str(question_date_diff.days/7) + ' weeks'   
+    else:
+        question_asked_long_ago = str(question_date_diff.days) + ' days'  
+    question.question_asked_long_ago = question_asked_long_ago
+
+    answer_date_diff = datetime.now(timezone.utc)-answer.date
+    if answer_date_diff.days/365 > 1:
+        answer_asked_long_ago = str(answer_date_diff.days/365) + ' years'
+    elif answer_date_diff.days/30 > 1:
+        answer_asked_long_ago = str(answer_date_diff.days/30) + ' months'
+    elif answer_date_diff.days/7 > 1:
+        answer_asked_long_ago = str(answer_date_diff.days/7) + ' weeks'   
+    else:
+        answer_asked_long_ago = str(answer_date_diff.days) + ' days'  
+    answer.answer_asked_long_ago = answer_asked_long_ago
+
     if request.method == 'POST':
         form = AnswerCommentForm(request.POST)
         if form.is_valid():
@@ -113,7 +138,7 @@ def AnswerCommentFormView(request, pk):
         return redirect('question_single', pk=answer.question.id)
     else:
         form = AnswerCommentForm()
-    return render(request, 'answer/answer_comment_form.html', {'form': form})
+    return render(request, 'answer/answer_comment_form.html', {'form': form, 'answer':answer, 'question':question})
 
 
 # class AnswerCommentFormView(CreateView):

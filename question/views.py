@@ -13,6 +13,7 @@ from django.shortcuts import redirect
 from votes.models import QuestionDownVote, QuestionUpVote, AnswerDownVote, AnswerUpVote
 from answer.forms import AnswerForm
 from django.db.models import Count
+from datetime import datetime, timezone
 #Create your views here.
 # def QuestionFormView(request):
 #     if request.method == 'POST':
@@ -40,11 +41,30 @@ class QuestionFormView(LoginRequiredMixin, CreateView):
 
 def QuestionSingleView(request, pk):
     question = Question.objects.get(id=pk)
-    question.upvotes = QuestionUpVote.objects.filter(question=question).count()
-    question.downvotes = QuestionDownVote.objects.filter(
-        question=question).count()
     question.views = question.views+1
     question.save()
+
+    question_upvoted = False
+    if QuestionUpVote.objects.filter(user=request.user, question=question).exists():
+        question_upvoted = True
+
+    question_downvoted = False
+    if QuestionDownVote.objects.filter(user=request.user, question=question).exists():
+        question_downvoted = True
+
+    question_date_diff = datetime.now(timezone.utc)-question.date
+    if question_date_diff.days/365 > 1:
+        question_asked_long_ago = str(question_date_diff.days/365) + ' years'
+    elif question_date_diff.days/30 > 1:
+        question_asked_long_ago = str(question_date_diff.days/30) + ' months'
+    elif question_date_diff.days/7 > 1:
+        question_asked_long_ago = str(question_date_diff.days/7) + ' weeks'   
+    else:
+        question_asked_long_ago = str(question_date_diff.days) + ' days'  
+    question.question_asked_long_ago = question_asked_long_ago
+    question.question_upvoted = question_upvoted
+    question.question_downvoted = question_downvoted
+
     if request.method == 'POST':
         if not request.user.is_authenticated:
             return redirect('login')
@@ -62,20 +82,64 @@ def QuestionSingleView(request, pk):
             comment.save()
     form1 = AnswerForm()
     form2 = QuestionCommentForm()
-    answers = question.answer_set.all()
-    # for answer in answers:
-    #     answer.upvotes = AnswerUpVote.objects.filter(answer=answer).count()
-    #     answer.downvotes = AnswerDownVote.objects.filter(answer=answer).count()
-    #     answer.comments = AnswerComment.objects.filter(answer=answer)
-    comments = question.questioncomment_set.all()
-    answers = answers.annotate(upvotes=Count(
-                    'answerupvote'), downvotes=Count('answerdownvote')).order_by('-upvotes', 'downvotes')
+    answers = question.answers.all()
+
+    answers = answers.annotate(upvote=Count('upvotes'), downvote=Count('downvotes')).order_by('-upvote', 'downvote')
+
     for answer in answers:
-        answer.comments = AnswerComment.objects.filter(answer=answer)
-    return render(request, 'question/question_single.html', {'question': question, 'answers': answers, 'form1': form1, 'form2': form2, 'comments': comments})
+        answer_date_diff = datetime.now(timezone.utc)-answer.date
+        if answer_date_diff.days/365 > 1:
+            answer_asked_long_ago = str(answer_date_diff.days/365) + ' years'
+        elif answer_date_diff.days/30 > 1:
+            answer_asked_long_ago = str(answer_date_diff.days/30) + ' months'
+        elif answer_date_diff.days/7 > 1:
+            answer_asked_long_ago = str(answer_date_diff.days/7) + ' weeks'   
+        else:
+            answer_asked_long_ago = str(answer_date_diff.days) + ' days'  
+        answer.answer_asked_long_ago = answer_asked_long_ago
+
+        answer_upvoted = False
+        if AnswerUpVote.objects.filter(user=request.user, answer=answer).exists():
+            answer_upvoted = True
+            
+        answer_downvoted = False
+        if AnswerDownVote.objects.filter(user=request.user, answer=answer).exists():
+            answer_downvoted = True
+
+        answer.answer_upvoted = answer_upvoted
+        answer.answer_downvoted = answer_downvoted
+
+    question_comments = question.comments.all()
+
+    for comment in question_comments:
+        comment_date_diff = datetime.now(timezone.utc)-comment.date
+        if comment_date_diff.days/365 > 1:
+            comment_asked_long_ago = str(comment_date_diff.days/365) + ' years'
+        elif comment_date_diff.days/30 > 1:
+            comment_asked_long_ago = str(comment_date_diff.days/30) + ' months'
+        elif comment_date_diff.days/7 > 1:
+            comment_asked_long_ago = str(comment_date_diff.days/7) + ' weeks'   
+        else:
+            comment_asked_long_ago = str(comment_date_diff.days) + ' days'  
+        comment.comment_asked_long_ago = comment_asked_long_ago
+
+    return render(request, 'question/question_single.html', {'question': question, 'answers': answers, 'form1': form1, 'form2': form2, 'question_comments':question_comments})
 
 def TagQuestionsView(request, tag):
     questions = Question.objects.filter(tag=tag).order_by('-date')
+
+    for question in questions:
+        question_date_diff = datetime.now(timezone.utc)-question.date
+        if question_date_diff.days/365 > 1:
+            question_asked_long_ago = str(question_date_diff.days/365) + ' years'
+        elif question_date_diff.days/30 > 1:
+            question_asked_long_ago = str(question_date_diff.days/30) + ' months'
+        elif question_date_diff.days/7 > 1:
+            question_asked_long_ago = str(question_date_diff.days/7) + ' weeks'   
+        else:
+            question_asked_long_ago = str(question_date_diff.days) + ' days' 
+        question.question_asked_long_ago = question_asked_long_ago
+
     if request.method == 'POST':
         form = SortForm(request.POST)
         if form.is_valid():
@@ -86,7 +150,7 @@ def TagQuestionsView(request, tag):
                 questions = questions.order_by('-date')
             if form_tag == 'P':
                 questions = questions.annotate(upvotes=Count(
-                    'questionupvote')).order_by('-views', '-upvotes' )
+                    'questionupvote'), downvotes=Count('questiondownvote')).order_by('-views', '-upvotes', 'downvotes')
     else:
         form = SortForm()
     return render(request, 'question/tag_questions.html', {'questions': questions, 'tag': tag, 'form': form})
@@ -120,7 +184,9 @@ def TagQuestionsView(request, tag):
 #         context['questions'] = self.get_queryset()
 #         return self.render_to_response(context)
 
-
+class QuestionTagsView(TemplateView):
+    template_name = 'question/question_tags.html'
+    
 # def QuestionEditView(request, pk):
 #     question = Question.objects.get(id=pk)
 #     if request.method == 'POST':

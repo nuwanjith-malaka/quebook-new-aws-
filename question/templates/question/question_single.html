@@ -21,7 +21,7 @@
   }
   
   .grey {
-    color: rgb(81, 83, 85);
+    color: rgb(118, 120, 122);
   }
 </style>
 {% endblock %}
@@ -31,13 +31,21 @@
   <h3>{{question.heading}}</h3>
   <br>
   {% endif %}
-  <p>{{question.body|safe}}</p><p class="grey">
-   <a href="{% url 'questionupvote' question.id %}"><button style="margin:5px;" type="submit" class="btn btn-success btn-sm">upvote</button></a>
-   <a href="{% url 'questiondownvote' question.id %}"><button style="margin:5px;" type="submit" class="btn btn-danger btn-sm">downvote</button></a>
+  <p>{{question.body|safe}}</p><p>
+    {% if question.question_upvoted %}
+    <a href="{% url 'questionupvote' question.id %}"><button style="margin:5px;" type="submit" class="btn btn-success btn-sm">upvoted</button></a>
+    {% else %}
+    <a href="{% url 'questionupvote' question.id %}"><button style="margin:5px;" type="submit" class="btn btn-success btn-sm">upvote</button></a>
+    {% endif %}
+    {% if question.question_downvoted %}
+    <a href="{% url 'questiondownvote' question.id %}"><button style="margin:5px;" type="submit" class="btn btn-danger btn-sm">downvoted</button></a>
+    {% else %}
+    <a href="{% url 'questiondownvote' question.id %}"><button style="margin:5px;" type="submit" class="btn btn-danger btn-sm">downvote</button></a>
+    {% endif %}
     
     </a> Asked By <a href="{% url 'asker' question.user.id %}">{% if question.user.askerprofile.photo %}
     <img src="{{question.user.askerprofile.photo.url}}"  width="30px" height="30px" style="margin-right: 3px;">{% endif %}
-    {{ question.user.username }}</a> on {{ question.date }} <span class="badge alert-success">{{question.upvotes}} upvotes</span> <span class="badge alert-danger"> {{question.downvotes}} downvotes</span> <span class="badge alert-secondary">{{question.views}} views</span>
+    {{ question.user.username }}</a> on {{ question.question_asked_long_ago }} ago <span class="badge alert-success">{{question.upvotes.count}} upvotes</span> <span class="badge alert-danger"> {{question.downvotes.count}} downvotes</span> <span class="badge alert-secondary">{{question.views}} views</span>
     {% if request.user == question.user %}</span> 
     <a href="{% url 'question_edit' question.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Edit</button></a>
       <a href="{% url 'question_delete' question.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Delete</button></a>
@@ -47,12 +55,12 @@
     
     <div>
       <h4>Comments</h4>
-      {% if comments %}
-        {% for comment in comments %}
+      {% if question_comments %}
+        {% for comment in question_comments %}
           <p class="grey">{{comment.comment}}</p><p >
           Commented By <a href="{% url 'asker' comment.user.id %}">{% if comment.user.askerprofile.photo %}
             <img src="{{comment.user.askerprofile.photo.url}}"  width="30px" height="30px" style="margin-right: 3px;">{% endif %}
-            {{ comment.user.username }}</a> on {{ comment.date }}  
+            {{ comment.user.username }}</a> on {{ comment.comment_asked_long_ago }} ago
           {% if request.user == comment.user %}
               <a href="{% url 'question_comment_edit' comment.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Edit</button></a>
               <a href="{% url 'question_comment_delete' comment.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Delete</button></a>
@@ -79,26 +87,35 @@
     <div class="px-2">
       <h4>Answers</h4>
       {% if answers %}
+      
         {% for answer in answers %}
-          <p>{{answer.body}}</p><p class="grey">
+          <p>{{answer.body}}</p><p >
+          {% if answer.answer_upvoted %}
+          <a href="{% url 'answerupvote' answer.id %}"><button style="margin:5px;" type="submit" class="btn btn-success btn-sm">upvoted</button></a>
+          {% else %}
           <a href="{% url 'answerupvote' answer.id %}"><button style="margin:5px;" type="submit" class="btn btn-success btn-sm">upvote</button></a>
+          {% endif %}
+          {% if answer.answer_downvoted %}
+          <a href="{% url 'answerdownvote' answer.id %}"><button style="margin:5px;" type="submit" class="btn btn-danger btn-sm">downvoted</button></a>
+          {% else %}
           <a href="{% url 'answerdownvote' answer.id %}"><button style="margin:5px;" type="submit" class="btn btn-danger btn-sm">downvote</button></a>
+          {% endif %}
           <a href="{% url 'answer_comment_form' answer.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">comment</button></a>
           Answerd By <a href="{% url 'asker' answer.user.id %}">{% if answer.user.askerprofile.photo %}
             <img src="{{answer.user.askerprofile.photo.url}}"  width="30px" height="30px" style="margin-right: 3px;">{% endif %}
-            {{ answer.user.username }}</a> on {{ answer.date }} <span class="badge alert-success">{{answer.upvotes}} upvotes</span>  <span class="badge alert-danger">{{answer.downvotes}} downvotes</span> </p>
+            {{ answer.user.username }}</a> on {{ answer.answer_asked_long_ago }} ago <span class="badge alert-success">{{answer.upvotes.count}} upvotes</span>  <span class="badge alert-danger">{{answer.downvotes.count}} downvotes</span> </p>
           {% if request.user == answer.user %}
             <p><a href="{% url 'answer_edit' answer.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Edit</button></a>
               <a href="{% url 'answer_delete' answer.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Delete</button></a></p>
           {% endif %}
           </p>
           <div >
-            {% for comment in answer.comments %}
+            {% for comment in answer.comments.all %}
             <hr>
               <p class="grey">{{comment.comment}}</p><p >
               Commented By <a href="{% url 'asker' comment.user.id %}">{% if comment.user.askerprofile.photo %}
                 <img src="{{comment.user.askerprofile.photo.url}}"  width="30px" height="30px" style="margin-right: 3px;">{% endif %}
-                {{ comment.user.username }}</a> on {{ comment.date }}  </p>
+                {{ comment.user.username }}</a> on {{ comment.date }} ago </p>
               {% if request.user == comment.user %}
                 <a href="{% url 'answer_comment_edit' comment.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Edit</button></a>
                   <a href="{% url 'answer_comment_delete' comment.id %}"><button style="margin:5px;" type="submit" class="btn btn-info btn-sm">Delete</button></a></p>

@@ -15,5 +15,5 @@ class AnswerCommentForm(forms.ModelForm):
         model = AnswerComment
         fields = ['comment']
         widgets = {
-            'comment': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Type your Comment'}),
+            'comment': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Type your Comment to this answer'}),
         }

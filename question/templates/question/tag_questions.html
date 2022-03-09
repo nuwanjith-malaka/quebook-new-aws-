@@ -6,11 +6,14 @@
     margin: 50px auto;
     width: 70%;
   }
-  h3,
+  
   h4,
   p,
   h5 .btn-holder {
     text-align: justify;
+  }
+  h3{
+    text-align: center;
   }
   a {
     color: black;
@@ -26,39 +29,51 @@
 </style>
 {% endblock %}{% block content %}
 <div class="center">
-  <h3>Questions related to {{tag}}</h3>
-  <br />
-  <form method="POST" action="">
-    {% csrf_token %} {{form}}
-    <button type="submit" class="btn btn-info btn-sm">Sort</button>
-  </form>
+  <h3>{{tag}}</h3>
   <br />
   <div class="pt-2"></div>
   {% if questions %} {% for question in questions %}
-  <a href="{% url 'question_single' question.pk %}"
-    ><h5>{{question.body|truncatechars:500}}</h5></a
-  >
-  <p>
-    <a href="{% url 'tag_questions' question.tag %}"
-      ><button type="submit" class="btn btn-warning btn-sm">
-        {{question.tag}}
-      </button></a
-    >
-    Asked By
-    <a href="{% url 'asker' question.user.id %}"
-      >{% if question.user.askerprofile.photo %}
-      <img
-        src="{{question.user.askerprofile.photo.url}}"
-        width="30px"
-        height="30px"
-        style="margin-right: 3px"
-      />{% endif %} {{ question.user.username }}</a
-    >
-    on {{ question.date }} upvotes- {{question.questionupvote_set.count}}
-    downvotes- {{question.questiondownvote_set.count}} views- {{question.views}}
-  </p>
-  <hr />
-  <br />
+  <div class="card text-center">
+    <a href="{% url 'question_single' question.pk %}">
+    <div class="card-header">
+      {% if question.heading %}
+      <h4>{{question.heading}}</h4>
+      {% endif %}
+    </div>
+    <div class="card-body">
+      <!-- <h5 class="card-title">Special title treatment</h5> -->
+      <p class="card-text">{{question.body|truncatechars:500}}</p>
+    </div>
+    <div class="card-footer text-muted">
+      <p>
+        <a href="{% url 'tag_questions' question.tag %}"
+          ><button type="submit" class="btn btn-warning btn-sm">
+            {{question.tag}}
+          </button></a
+        >
+        Asked By
+        <a href="{% url 'asker' question.user.id %}"
+          >{% if question.user.asker.photo %}
+          <img
+            src="{{question.user.asker.photo.url}}"
+            width="30px"
+            height="30px"
+            style="margin-right: 3px"
+          />{% endif %} {{ question.user.username }}</a
+        >
+        on {{ question.question_asked_long_ago }} ago
+        <span class="badge alert-success"
+          >{{question.upvotes.count}} upvotes
+        </span>
+        <span class="badge alert-danger"
+          >{{question.downvotes.count}} downvotes
+        </span>
+        <span class="badge alert-secondary">{{question.views}} views</span>
+      </p>
+    </div>
+    </a>
+  </div>
+  <br>
   {% endfor %} {% endif %}
 </div>
 {% endblock %}

@@ -96,9 +96,9 @@
         {{question.tag}}
       </button></a
     >
-    Asked on {{ question.date }}
-    <span class="badge alert-success">{{question.upvotes}} upvotes</span>
-    <span class="badge alert-danger">{{question.downvotes}} downvotes</span>
+    Asked on {{ question.question_asked_long_ago }} ago
+    <span class="badge alert-success">{{question.upvotes.count}} upvotes</span>
+    <span class="badge alert-danger">{{question.downvotes.count}} downvotes</span>
     <span class="badge alert-secondary">{{question.views}} views</span>
   </p>
   <hr />

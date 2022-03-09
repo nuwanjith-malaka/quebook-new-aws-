@@ -11,6 +11,7 @@ def QuestionUpVoteView(request, pk):
     try:
         upvote = QuestionUpVote.objects.get(
             user=request.user, question=question)
+        upvote.delete()
         return redirect('question_single', pk=pk)
     except QuestionUpVote.DoesNotExist:
         QuestionUpVote.objects.create(user=request.user, question=question)
@@ -24,6 +25,7 @@ def QuestionDownVoteView(request, pk):
     try:
         downvote = QuestionDownVote.objects.get(
             user=request.user, question=question)
+        downvote.delete()
         return redirect('question_single', pk=pk)
     except QuestionDownVote.DoesNotExist:
         QuestionDownVote.objects.create(user=request.user, question=question)
@@ -35,6 +37,7 @@ def AnswerUpVoteView(request, pk):
     answer = Answer.objects.get(id=pk)
     try:
         upvote = AnswerUpVote.objects.get(user=request.user, answer=answer)
+        upvote.delete()
         return redirect('question_single', pk=answer.question.id)
     except AnswerUpVote.DoesNotExist:
         AnswerUpVote.objects.create(user=request.user, answer=answer)
@@ -47,6 +50,7 @@ def AnswerDownVoteView(request, pk):
     answer = Answer.objects.get(id=pk)
     try:
         downvote = AnswerDownVote.objects.get(user=request.user, answer=answer)
+        downvote.delete()
         return redirect('question_single', pk=answer.question.id)
     except AnswerDownVote.DoesNotExist:
         AnswerDownVote.objects.create(user=request.user, answer=answer)
