@@ -6,7 +6,7 @@ SECRET_KEY = env('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ec2-3-23-99-152.us-east-2.compute.amazonaws.com']
+ALLOWED_HOSTS = []
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
@@ -17,7 +17,7 @@ DATABASES = {
         'USER': 'malaka',
         'PASSWORD': 'malaka1999625',
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': '5432',
     }
 }
 
