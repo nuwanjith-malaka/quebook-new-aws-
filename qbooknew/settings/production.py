@@ -23,4 +23,4 @@ DATABASES = {
 }
 
 LOGIN_REDIRECT_URL = 'http://ec2-18-216-228-117.us-east-2.compute.amazonaws.com/'
-LOGIN_URL = 'http://ec2-18-216-228-117.us-east-2.compute.amazonaws.com/'
+LOGIN_URL = 'http://ec2-18-216-228-117.us-east-2.compute.amazonaws.com/login/'
